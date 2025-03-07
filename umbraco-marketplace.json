@@ -1,0 +1,14 @@
+{
+    "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json", 
+    "AuthorDetails": {
+      "Name": "Busra Sengul",
+      "ImageUrl": "https://github.com/busrasengul.png"
+    },
+    "Category": "",
+    "Description": "",
+    "LicenseTypes": [ "Free" ],
+    "IssueTrackerUrl": "https://github.com/busrasengul/Umbraco.Community.EncryptionPropertyEditor/issues",
+    "PackageType": "Package",
+    "Tags": [],
+    "Title": "Encryption Property Editor "
+  }

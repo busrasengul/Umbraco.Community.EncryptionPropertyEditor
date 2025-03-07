@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33020.496
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6253D60F-8C85-4FA6-B538-A987E5ACCE6D}"
+	ProjectSection(SolutionItems) = preProject
+		..\LICENSE = ..\LICENSE
+		..\.github\README.md = ..\.github\README.md
+		..\umbraco-marketplace.json = ..\umbraco-marketplace.json
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EncryptionPropertyEditor", "EncryptionPropertyEditor\EncryptionPropertyEditor.csproj", "{A12BC7D9-4F1C-46FE-9C2A-A42DE4795A71}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EncryptionPropertyEditor.TestSite", "EncryptionPropertyEditor.TestSite\EncryptionPropertyEditor.TestSite.csproj", "{06DC993B-3061-4FE5-8D7F-820CFC89A36B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A12BC7D9-4F1C-46FE-9C2A-A42DE4795A71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A12BC7D9-4F1C-46FE-9C2A-A42DE4795A71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A12BC7D9-4F1C-46FE-9C2A-A42DE4795A71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A12BC7D9-4F1C-46FE-9C2A-A42DE4795A71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06DC993B-3061-4FE5-8D7F-820CFC89A36B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06DC993B-3061-4FE5-8D7F-820CFC89A36B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06DC993B-3061-4FE5-8D7F-820CFC89A36B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06DC993B-3061-4FE5-8D7F-820CFC89A36B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6F07004F-9903-4AEB-9ED0-BE57A0326D20}
+	EndGlobalSection
+EndGlobal
