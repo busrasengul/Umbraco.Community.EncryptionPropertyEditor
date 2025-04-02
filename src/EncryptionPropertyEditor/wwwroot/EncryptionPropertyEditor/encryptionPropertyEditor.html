@@ -1,5 +1,14 @@
-<div ng-controller="EncryptionPropertyEditorController" >
-  <input ng-model="model.plaintext" ng-change="encrypt()" class="umb-property-editor umb-textstring textstring ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty ng-valid-required"/>
-  <input type="hidden" , ng-model="model.value" />
+<div ng-controller="EncryptionPropertyEditorController as vm" >
+  <input ng-model="model.plaintext" ng-blur="vm.encrypt()" class="umb-property-editor umb-textstring textstring ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty ng-valid-required"/>
+  <span>
+    <uui-icon-registry-essential ng-if="!vm.hasValue()">
+      <uui-icon style="color: green;" name="unlock"></uui-icon>
+    </uui-icon-registry-essential>
+    <uui-icon-registry-essential ng-if="vm.hasValue()">
+      <uui-icon style="color: {{vm.hashing ? 'red' : 'orange'}};" name="lock"></uui-icon>
+    </uui-icon-registry-essential>
+  </span>
+  <input type="hidden" ng-model="model.value" />
   <span style="display:none" ng-bind="model.value"></span>
+  <span ng-if="vm.hasValue() && vm.hashing">Hashed Value Stored</span>
 </div>

@@ -1,38 +1,46 @@
 angular.module("umbraco").controller("EncryptionPropertyEditorController",
   ["$scope", "EncryptionPropertyEditorResource",
-  function ($scope, EncryptionPropertyEditorResource) {
-    console.log($scope.model);
-    var key = $scope.model.config.key;
-    var iv = $scope.model.config.iv;
-    var salt = $scope.model.config.salt;
-    var hash = $scope.model.config.useHash;
-    var pw = $scope.model.config.password;
-    var plaintext = $scope.model.plaintext;
-    console.log(plaintext);
+    function ($scope, EncryptionPropertyEditorResource) {
 
+      var vm = this;
+      var key = $scope.model.config.key;
+      var iv = $scope.model.config.iv;
+      var salt = $scope.model.config.salt;
+      var hash = $scope.model.config.useHash;
+      var pw = $scope.model.config.password;
+      var plaintext = $scope.model.plaintext;    
+      console.log($scope.model.config);
+      vm.encrypt = function () {
+        console.debug("encrypt");
+        EncryptionPropertyEditorResource.encrypt(hash, salt, pw, $scope.model.plaintext, key, iv).then(function (response) {
+          $scope.model.value = response;
+        });
+      }
 
-    $scope.getAes = function () {
-    EncryptionPropertyEditorResource.getAes(key, iv).then(function (response) {
-      if (response) {
+      vm.decrypt = decrypt;
+      vm.hashing = hash;
+      vm.hasValue = function () {
+        return $scope.model.value ? true : false;
+      }
+
+      console.log($scope.model.value);
+      console.log($scope.model.config.useHash);
+      if ($scope.model.value) {
+        if (!$scope.model.config.useHash) {
+          decrypt();
+        }
+      }
+
+    function decrypt() {
+      console.log(`decrypt ${pw}`);
+      EncryptionPropertyEditorResource.decrypt(hash, pw, $scope.model.value, key, iv).then(function (response) {
         console.log(response);
-      } else {
-        return false;
-      }
-    });
-  }
-
-    $scope.encrypt = function () {
-      console.log("encrypt");
-      EncryptionPropertyEditorResource.encrypt(hash, salt, pw, plaintext, key, iv);
-  }
-
-    $scope.decrypt = function () {
-      EncryptionPropertyEditorResource.decrypt(hash, salt, pw, plaintext).then(function (response) {
-      if (response) {
-        plaintext = response.data.replace(/"/g, "");
-      } else {
-        return false;
-      }
-    });
-  }
+        if (response) {
+          plaintext = response.replace(/"/g, "");
+          $scope.model.plaintext = plaintext;
+        } else {
+          return false;
+        }
+      });
+    }
 }]);
