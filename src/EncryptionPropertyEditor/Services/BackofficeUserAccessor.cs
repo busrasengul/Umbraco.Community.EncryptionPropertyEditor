@@ -1,6 +1,8 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Umbraco.Community.EncryptionPropertyEditor.Interfaces;
 using Umbraco.Extensions;
@@ -11,38 +13,62 @@ public class BackofficeUserAccessor : IBackofficeUserAccessor
     private readonly IOptionsSnapshot<CookieAuthenticationOptions> _cookieOptionsSnapshot;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
+    private readonly ILogger<BackofficeUserAccessor> _logger;
     public BackofficeUserAccessor(
         IOptionsSnapshot<CookieAuthenticationOptions> cookieOptionsSnapshot,
-        IHttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor,
+        ILogger<BackofficeUserAccessor> logger
+    )
     {
         _cookieOptionsSnapshot = cookieOptionsSnapshot;
         _httpContextAccessor = httpContextAccessor;
+        _logger = logger;
     }
 
-    /// <summary>
-    /// Updated to use ChunkingCookieManager as per Sean Maloney's answer on our.umbraco.com
-    /// https://our.umbraco.com/forum/umbraco-9/106857-how-do-i-determine-if-a-backoffice-user-is-logged-in-from-a-razor-view#comment-341847
-    /// </summary>
     public ClaimsIdentity BackofficeUser
     {
         get
         {
             var httpContext = _httpContextAccessor.HttpContext;
-
             if (httpContext == null)
+            {
+                _logger.LogWarning("BackofficeAUserAccessor: HttpContext is null.");
                 return new ClaimsIdentity();
+            }
 
-            var cookieOptions = _cookieOptionsSnapshot.Get(Cms.Core.Constants.Security.BackOfficeAuthenticationType);
-            var cookieManager = new ChunkingCookieManager();
-            var backOfficeCookie = cookieManager.GetRequestCookie(httpContext, cookieOptions.Cookie.Name!);
+            CookieAuthenticationOptions cookieOptions = _cookieOptionsSnapshot.Get(Umbraco.Cms.Core.Constants.Security.BackOfficeAuthenticationType);
 
+            string? backOfficeCookie = httpContext.Request.Cookies[cookieOptions.Cookie.Name!];
             if (string.IsNullOrEmpty(backOfficeCookie))
+            {
+                _logger.LogWarning("BackofficeAUserAccessor: BackOffice cookie is null or empty.");
                 return new ClaimsIdentity();
-
-            var unprotected = cookieOptions.TicketDataFormat.Unprotect(backOfficeCookie!);
-            var backOfficeIdentity = unprotected?.Principal.GetUmbracoIdentity();
-
-            return backOfficeIdentity ?? new ClaimsIdentity();
+            }
+            AuthenticationTicket? unprotected;
+            try
+            {
+                unprotected = cookieOptions.TicketDataFormat.Unprotect(backOfficeCookie!);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "BackofficeAUserAccessor: Failed to unprotect the BackOffice cookie.");
+                return new ClaimsIdentity();
+            }
+            if (unprotected == null)
+            {
+                _logger.LogWarning("BackofficeAUserAccessor: Unprotected authentication ticket is null.");
+                return new ClaimsIdentity();
+            }
+            ClaimsIdentity? backOfficeIdentity = unprotected.Principal.GetUmbracoIdentity();
+            if (backOfficeIdentity == null)
+            {
+                _logger.LogWarning("BackofficeAUserAccessor: BackOffice identity is null.");
+            }
+            else
+            {
+                _logger.LogInformation("BackofficeAUserAccessor: User authenticated.");
+            }
+            return backOfficeIdentity;
         }
     }
 }
