@@ -11,6 +11,7 @@ angular.module("umbraco").controller("EncryptionPropertyEditorController",
       var plaintext = $scope.model.plaintext;    
       console.log($scope.model.config);
       vm.encrypt = function () {
+        if (!$scope.model.plaintext || $scope.model.plaintext.length < 1) return;
         console.debug("encrypt");
         EncryptionPropertyEditorResource.encrypt(hash, salt, pw, $scope.model.plaintext, key, iv).then(function (response) {
           $scope.model.value = response;
