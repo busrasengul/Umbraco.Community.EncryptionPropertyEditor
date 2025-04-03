@@ -2,32 +2,26 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Umbraco.Cms.Web.Common.Controllers;
-using Umbraco.Community.EncryptionPropertyEditor.Interfaces;
+using Umbraco.Cms.Core.Security;
+using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Community.EncryptionPropertyEditor.Models;
 
 namespace Umbraco.Community.EncryptionPropertyEditor.Controllers;
-public class EncryptionApiController : UmbracoApiController
+public class EncryptionApiController : UmbracoAuthorizedApiController
 {
-    private readonly IBackofficeUserAccessor _backofficeUserAccessor;
+    private readonly IBackOfficeSecurityAccessor _backofficeUserAccessor;
     private readonly IOptions<EncryptionPropertyEditorSettings> _propertySettings;
 
-    public EncryptionApiController(IBackofficeUserAccessor backofficeUserAccessor, IOptions<EncryptionPropertyEditorSettings> propertySettings)
+    public EncryptionApiController(IBackOfficeSecurityAccessor backofficeUserAccessor, IOptions<EncryptionPropertyEditorSettings> propertySettings)
     {
         _backofficeUserAccessor = backofficeUserAccessor;
         _propertySettings = propertySettings;
     }
 
     [HttpGet]
-    public static Aes GetAes(string key, string iv)
+    public bool Ping()
     {
-        Aes aes = Aes.Create();
-
-        aes.Key = hexStringToByteArray(key);
-
-        aes.IV = hexStringToByteArray(iv);
-
-        return aes;
+        return true;
     }
 
     [HttpGet]
@@ -99,7 +93,7 @@ public class EncryptionApiController : UmbracoApiController
         }
         else
         {
-            return "";
+            return string.Empty;
         }
     }
 
@@ -114,7 +108,7 @@ public class EncryptionApiController : UmbracoApiController
 
             stringData = stringData.Replace(encryptionPrefix, "");
 
-            string roundtrip = DecryptStringFromBytes_Aes(hexStringToByteArray(stringData), key, iv);
+            string roundtrip = DecryptStringFromBytes_Aes(HexStringToByteArray(stringData), key, iv);
 
             return roundtrip;
         }
@@ -124,15 +118,26 @@ public class EncryptionApiController : UmbracoApiController
         }
     }
 
-    static string ByteArrayToHexString(byte[] data)
+    private static Aes GetAes(string key, string iv)
     {
-        StringBuilder hex = new StringBuilder(data.Length * 2);
+        Aes aes = Aes.Create();
+
+        aes.Key = HexStringToByteArray(key);
+
+        aes.IV = HexStringToByteArray(iv);
+
+        return aes;
+    }
+
+    private static string ByteArrayToHexString(byte[] data)
+    {
+        StringBuilder hex = new(data.Length * 2);
         foreach (byte b in data)
             hex.AppendFormat("{0:x2}", b);
         return hex.ToString();
     }
 
-    public static byte[] hexStringToByteArray(string hex)
+    private static byte[] HexStringToByteArray(string hex)
     {
         if (hex.Length % 2 == 1)
             throw new Exception("The binary key cannot have an odd number of digits");
@@ -147,7 +152,7 @@ public class EncryptionApiController : UmbracoApiController
         return arr;
     }
 
-    public static int GetHexVal(char hex)
+    private static int GetHexVal(char hex)
     {
         int val = hex;
         //For uppercase A-F letters:
@@ -158,9 +163,9 @@ public class EncryptionApiController : UmbracoApiController
         return val - (val < 58 ? 48 : val < 97 ? 55 : 87);
     }
 
-    public string EncryptStringToBytes_Aes(string plainText, string key, string iv)
+    private string EncryptStringToBytes_Aes(string plainText, string key, string iv)
     {
-        if (_backofficeUserAccessor.BackofficeUser.IsAuthenticated)
+        if (_backofficeUserAccessor.BackOfficeSecurity != null && _backofficeUserAccessor.BackOfficeSecurity.IsAuthenticated())
         {
             // Check arguments.
             if (plainText == null || plainText.Length <= 0)
@@ -197,9 +202,9 @@ public class EncryptionApiController : UmbracoApiController
         }
     }
 
-    public string DecryptStringFromBytes_Aes(byte[] cipherText, string key, string iv)
+    private string DecryptStringFromBytes_Aes(byte[] cipherText, string key, string iv)
     {
-        if (_backofficeUserAccessor.BackofficeUser.IsAuthenticated)
+        if (_backofficeUserAccessor.BackOfficeSecurity != null && _backofficeUserAccessor.BackOfficeSecurity.IsAuthenticated())
         {
             // Check arguments.
             if (cipherText == null || cipherText.Length <= 0)
