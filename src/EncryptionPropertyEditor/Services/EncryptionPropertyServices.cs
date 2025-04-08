@@ -75,9 +75,7 @@ internal class EncryptionPropertyServices : IEncryptionPropertyService
 
         return aes;
     }
-
-
-
+    
     //note: this is not technically camelCase it is making the first character upper case, which is more TitleCase
     private static string ConvertToCamelCase(string sourceString)
     {
