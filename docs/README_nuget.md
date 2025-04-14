@@ -6,7 +6,7 @@
 
 ## Installation
 
-Add the package to an existing Umbraco website (v15+) from nuget:
+Add the package to an existing Umbraco website (v13+) from nuget:
 
 `dotnet add package Umbraco.Community.Umbraco.Community.EncrytionPropertyEditor`
 
