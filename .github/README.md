@@ -1,4 +1,4 @@
-# Umbraco .Community .Encrytion Property Editor 
+# Umbraco.Community.EncrytionPropertyEditor 
 
 [![Downloads](https://img.shields.io/nuget/dt/Umbraco.Community.Umbraco.Community.EncrytionPropertyEditor?color=cc9900)](https://www.nuget.org/packages/Umbraco.Community.Umbraco.Community.EncrytionPropertyEditor/)
 [![NuGet](https://img.shields.io/nuget/vpre/Umbraco.Community.Umbraco.Community.EncrytionPropertyEditor?color=0273B3)](https://www.nuget.org/packages/Umbraco.Community.Umbraco.Community.EncrytionPropertyEditor)
@@ -6,9 +6,9 @@
 
 ## Installation
 
-Add the package to an existing Umbraco website (v15+) from nuget:
+Add the package to an existing Umbraco website (v13+) from nuget:
 
-`dotnet add package Umbraco.Community.Umbraco.Community.EncrytionPropertyEditor`
+`dotnet add package Umbraco.Community.EncrytionPropertyEditor`
 
 ### Install the Package:
 
