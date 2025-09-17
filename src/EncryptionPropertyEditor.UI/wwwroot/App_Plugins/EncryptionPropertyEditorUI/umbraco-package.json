@@ -1,0 +1,14 @@
+{
+  "id": "EncryptionPropertyEditor.UI",
+  "name": "EncryptionPropertyEditor.UI",
+  "version": "0.0.0",
+  "allowTelemetry": true,
+  "extensions": [
+    {
+      "name": "Encryption Property Editor UIBundle",
+      "alias": "EncryptionPropertyEditor.UI.Bundle",
+      "type": "bundle",
+      "js": "/App_Plugins/EncryptionPropertyEditorUI/encryption-property-editor-ui.js"
+    }
+  ]
+}

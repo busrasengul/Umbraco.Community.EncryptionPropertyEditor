@@ -1,11 +1,23 @@
+using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Umbraco.Cms.Web.BackOffice.Controllers;
+using Umbraco.Cms.Api.Common.Attributes;
+using Umbraco.Cms.Api.Management.Controllers;
+using Umbraco.Cms.Web.Common.Authorization;
+using Umbraco.Cms.Web.Common.Routing;
 using Umbraco.Community.EncryptionPropertyEditor.Interfaces;
 using Umbraco.Community.EncryptionPropertyEditor.Models;
 
 namespace Umbraco.Community.EncryptionPropertyEditor.Controllers;
-public class EncryptionApiController : UmbracoAuthorizedApiController
+
+[ApiController]
+[ApiVersion("1.0")]
+[ApiExplorerSettings(GroupName = "Umbraco.Community.EncryptionPropertyEditor")]
+[BackOfficeRoute("encryptionproperty/api/v{version:apiVersion}")]
+[Authorize(Policy = AuthorizationPolicies.SectionAccessSettings)]
+[MapToApi(Constants.ApiName)]
+public class EncryptionApiController : ManagementApiControllerBase
 {
     private readonly IEncryptionPropertyService _encryptionPropertyService;
     private readonly IOptions<EncryptionPropertyEditorSettings> _propertySettings;
@@ -22,7 +34,7 @@ public class EncryptionApiController : UmbracoAuthorizedApiController
         return true;
     }
 
-    [HttpGet]
+    [HttpGet("hash")]
     public string Hash(string pw, string password, string salt)
     {
         string hashPrefix = "[[HASHED]]";
@@ -42,7 +54,7 @@ public class EncryptionApiController : UmbracoAuthorizedApiController
         }
     }
 
-    [HttpGet]
+    [HttpGet("encrypt")]
     public IActionResult Encrypt(string pw, string stringData, string key, string iv, string format = "")
     {
         if (pw == _propertySettings.Value.Password)
@@ -64,7 +76,7 @@ public class EncryptionApiController : UmbracoAuthorizedApiController
         }
     }
 
-    [HttpGet]
+    [HttpGet("decrypt")]
     public IActionResult Decrypt(string pw, string stringData, string key, string iv)
     {
         if (pw == _propertySettings.Value.Password)
